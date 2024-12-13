@@ -47,9 +47,9 @@ class MetroSystem:
             return "No route available between the stations.", wallet_balance
         elif wallet_balance >= fare:
             wallet_balance -= fare
-            return f"Ticket booked! Fare: {fare}. Remaining balance: {wallet_balance}", wallet_balance
+            return f"Ticket booked! Fare: ₹{fare}. Remaining balance: ₹{wallet_balance}", wallet_balance
         else:
-            return f"Insufficient balance! Your balance: {wallet_balance}, Fare: {fare}", wallet_balance
+            return f"Insufficient balance! Your balance: ₹{wallet_balance}, Fare: ₹{fare}", wallet_balance
 
 # Initialize the Metro System
 metro = MetroSystem()
@@ -73,11 +73,11 @@ st.title("Metro Ticket Booking System")
 # Wallet feature
 st.sidebar.title("Wallet")
 current_balance = st.session_state.wallet_balance
-st.sidebar.write(f"Current Wallet Balance: {current_balance}")
+st.sidebar.write(f"Current Wallet Balance: ₹{current_balance}")
 recharge_amount = st.sidebar.number_input("Enter recharge amount", min_value=0, value=0)
 if st.sidebar.button("Recharge Wallet"):
     st.session_state.wallet_balance += recharge_amount
-    st.sidebar.write(f"Wallet recharged! New balance: {st.session_state.wallet_balance}")
+    st.sidebar.write(f"Wallet recharged! New balance: ₹{st.session_state.wallet_balance}")
 
 # User ticket booking
 source_station = st.selectbox("Select source station", metro.graph.keys())
@@ -86,3 +86,11 @@ if st.button("Book Ticket"):
     ticket_response, new_balance = metro.book_ticket(source_station, destination_station, st.session_state.wallet_balance)
     st.session_state.wallet_balance = new_balance
     st.write(ticket_response)
+
+# Display stations and routes with fares
+st.subheader("Available Stations and Fares")
+for station in metro.graph.keys():
+    st.write(f"Station: {station}")
+    for neighbor, distance in metro.graph[station].items():
+        fare = distance * 2  # Fare calculation
+        st.write(f"  - To {neighbor}: {distance} km, Fare: ₹{fare}")
